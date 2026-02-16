@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useMemo, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function App() {
@@ -21,49 +21,51 @@ export default function App() {
   }, [activeScreen]);
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.header}>
-          <Text style={styles.headerEyebrow}>Fitness Progress</Text>
-          <Text style={styles.headerTitle}>Tracking App</Text>
-          <Text style={styles.headerSubtitle}>
-            Connect, track, and improve with a focused training workflow.
-          </Text>
+    <SafeAreaProvider>
+      <View style={styles.container}>
+        <StatusBar style="light" />
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.header}>
+            <Text style={styles.headerEyebrow}>Fitness Progress</Text>
+            <Text style={styles.headerTitle}>Tracking App</Text>
+            <Text style={styles.headerSubtitle}>
+              Connect, track, and improve with a focused training workflow.
+            </Text>
+          </View>
+        </SafeAreaView>
+        <View style={styles.content}>
+          <ScreenComponent />
         </View>
-      </SafeAreaView>
-      <View style={styles.content}>
-        <ScreenComponent />
-      </View>
-      <SafeAreaView style={styles.navWrap}>
-        <View style={styles.nav}>
-          {[
-            { key: 'onboarding', label: 'Onboarding' },
-            { key: 'goals', label: 'Goals' },
-            { key: 'upload', label: 'Progress' },
-            { key: 'community', label: 'Community' },
-          ].map((item) => (
-            <TouchableOpacity
-              key={item.key}
-              onPress={() => setActiveScreen(item.key)}
-              style={[
-                styles.navButton,
-                activeScreen === item.key && styles.navButtonActive,
-              ]}
-            >
-              <Text
+        <SafeAreaView style={styles.navWrap}>
+          <View style={styles.nav}>
+            {[
+              { key: 'onboarding', label: 'Onboarding' },
+              { key: 'goals', label: 'Goals' },
+              { key: 'upload', label: 'Progress' },
+              { key: 'community', label: 'Community' },
+            ].map((item) => (
+              <TouchableOpacity
+                key={item.key}
+                onPress={() => setActiveScreen(item.key)}
                 style={[
-                  styles.navText,
-                  activeScreen === item.key && styles.navTextActive,
+                  styles.navButton,
+                  activeScreen === item.key && styles.navButtonActive,
                 ]}
               >
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </SafeAreaView>
-    </View>
+                <Text
+                  style={[
+                    styles.navText,
+                    activeScreen === item.key && styles.navTextActive,
+                  ]}
+                >
+                  {item.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </SafeAreaView>
+      </View>
+    </SafeAreaProvider>
   );
 }
 
