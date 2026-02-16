@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import * as DocumentPicker from 'expo-document-picker';
 import { useMemo, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -148,11 +149,26 @@ function GoalSetupScreen() {
 }
 
 function ProgressUploadScreen() {
+  const [selectedFile, setSelectedFile] = useState(null);
   const recentUploads = [
     { title: 'Bench Press - 185 lb', note: 'PR set · Video' },
     { title: 'Deadlift - 275 lb', note: 'Form check · Video' },
     { title: 'Squat - 205 lb', note: 'Depth review · Image' },
   ];
+
+  const handlePick = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ['image/*', 'video/*'],
+      multiple: false,
+      copyToCacheDirectory: true,
+    });
+
+    if (result.canceled || !result.assets?.length) {
+      return;
+    }
+
+    setSelectedFile(result.assets[0]);
+  };
 
   return (
     <View style={screenStyles.container}>
@@ -162,9 +178,17 @@ function ProgressUploadScreen() {
           Add a video or image to track form and celebrate new personal records.
         </Text>
         <View style={screenStyles.uploadPanel}>
-          <Text style={screenStyles.uploadTitle}>Drag or tap to upload</Text>
+          <Text style={screenStyles.uploadTitle}>Tap to upload</Text>
           <Text style={screenStyles.uploadCopy}>MP4, MOV, JPG supported</Text>
         </View>
+        <TouchableOpacity style={screenStyles.uploadButton} onPress={handlePick}>
+          <Text style={screenStyles.uploadButtonText}>Choose file</Text>
+        </TouchableOpacity>
+        {selectedFile ? (
+          <Text style={screenStyles.uploadedFile}>
+            Selected: {selectedFile.name || selectedFile.uri}
+          </Text>
+        ) : null}
       </View>
 
       <View style={screenStyles.card}>
@@ -424,6 +448,23 @@ const screenStyles = StyleSheet.create({
   uploadCopy: {
     color: '#94a3b8',
     marginTop: 6,
+    fontSize: 12,
+  },
+  uploadButton: {
+    marginTop: 12,
+    backgroundColor: '#38bdf8',
+    paddingVertical: 10,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  uploadButtonText: {
+    color: '#0b0d1f',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  uploadedFile: {
+    marginTop: 10,
+    color: '#cbd5f5',
     fontSize: 12,
   },
   list: {
